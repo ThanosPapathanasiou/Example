@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Example.Api.DependencyRegistration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace WebApplicationArchitectureExample.Api
+namespace Example.Api
 {
     public class Startup
     {
@@ -26,8 +27,14 @@ namespace WebApplicationArchitectureExample.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-            services.AddSwaggerGen();
+            var dependencyRegistrants = 
+                typeof(Startup).Assembly.ExportedTypes
+                .Where(type => typeof(IRegisterDependency).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                .Select(type => Activator.CreateInstance(type))
+                .Cast<IRegisterDependency>()
+                .ToList();
+            
+            dependencyRegistrants.ForEach(x => x.RegisterDependency(services, Configuration));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
