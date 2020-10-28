@@ -10,6 +10,8 @@ namespace Example.Api.Services
         Task<List<Post>> GetAllPostsAsync();
 
         Task<Post> CreatePostAsync(string title);
+
+        Task<bool> DeletePostAsync(Guid id);
     }
 
     public class PostRepository : IPostRepository
@@ -29,6 +31,11 @@ namespace Example.Api.Services
             }
         }
 
+        public async Task<List<Post>> GetAllPostsAsync()
+        {
+            return await Task.FromResult(posts);
+        }
+
         public async Task<Post> CreatePostAsync(string title)
         {
             var post = new Post()
@@ -42,9 +49,11 @@ namespace Example.Api.Services
             return await Task.FromResult(post);
         }
 
-        public async Task<List<Post>> GetAllPostsAsync()
+        public async Task<bool> DeletePostAsync(Guid id)
         {
-            return await Task.FromResult(posts);
+            bool removedSuccessfully = posts.Remove(posts.Find(post => post.Id == id));
+
+            return await Task.FromResult(removedSuccessfully);
         }
     }
 }

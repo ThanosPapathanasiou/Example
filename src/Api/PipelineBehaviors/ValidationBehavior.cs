@@ -22,7 +22,7 @@ namespace Example.Api.PipelineBehaviors
             CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
-            var context = new FluentValidation.ValidationContext<TRequest>(request);
+            var context = new ValidationContext<TRequest>(request);
 
             var failures = validators
                 .Select(x => x.Validate(context))

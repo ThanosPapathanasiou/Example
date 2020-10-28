@@ -8,7 +8,6 @@ namespace Example.Api.DependencyRegistration
         public void RegisterDependency(IServiceCollection services, IConfiguration configuration)
         {
             services.AddControllers();
-            services.AddSwaggerGen();
         }
     }
 }

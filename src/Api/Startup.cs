@@ -28,6 +28,8 @@ namespace Example.Api
                 .Cast<IRegisterDependency>()
                 .ToList();
             
+            // this registration method works only if there is no interdependency between the things that are being registered.
+            // i.e. if there is ever a case of class A requiring class B to be resolved as part of its registration
             dependencyRegistrants.ForEach(x => x.RegisterDependency(services, Configuration));
         }
 
@@ -45,6 +47,8 @@ namespace Example.Api
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
