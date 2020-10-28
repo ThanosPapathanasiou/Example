@@ -14,7 +14,7 @@ namespace Example.Api.Cqrs.Commands.Handlers
 
         public async Task<Post> Handle(CreatePostCommand context, CancellationToken cancellationToken)
         {
-            var post = await repository.CreatePostAsync(context.Title);
+            var post = await repository.CreatePostAsync(context.Title, cancellationToken);
             return post;
         }
     }

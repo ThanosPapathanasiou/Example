@@ -13,7 +13,7 @@ namespace Example.Api.Cqrs.Commands.Handlers
 
         public async Task<bool> Handle(DeletePostCommand context, CancellationToken cancellationToken)
         {
-            var post = await repository.DeletePostAsync(context.Id);
+            var post = await repository.DeletePostAsync(context.Id, cancellationToken);
             return post;
         }
     }

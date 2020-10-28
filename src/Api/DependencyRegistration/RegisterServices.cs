@@ -10,7 +10,7 @@ namespace Example.Api.DependencyRegistration
     {
         public void RegisterDependency(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IPostRepository>(_ => new PostRepository());
+            services.AddSingleton<IPostRepository>(_ => new PostRepositoryStub());
 
             // TODO: if we want to make this a proper application then we should switch the UserStore for a proper DB
             // this InMemoryUser store is a minimum user store implementation with lots of NotImplementedExceptions :)

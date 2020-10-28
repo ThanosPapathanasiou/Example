@@ -15,7 +15,7 @@ namespace Example.Api.Cqrs.Queries.Handlers
 
         public async Task<List<Post>> Handle(GetPostsQuery context, CancellationToken cancellationToken)
         {
-           return await repository.GetAllPostsAsync();
+           return await repository.GetAllPostsAsync(cancellationToken);
         }
     }
 }

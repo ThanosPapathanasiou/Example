@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading;
 
 namespace Example.Api.Controllers.v1
 {
@@ -32,9 +33,9 @@ namespace Example.Api.Controllers.v1
 
         [HttpGet]
         [ProducesResponseType(typeof(List<PostResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var posts = await mediator.Send(new GetPostsQuery());
+            var posts = await mediator.Send(new GetPostsQuery(), cancellationToken);
             var result = posts.Select(mapper.Map<Post, PostResponse>);
             return Ok(result);
         }
@@ -42,9 +43,9 @@ namespace Example.Api.Controllers.v1
         [HttpGet("{id:Guid}")]
         [ProducesResponseType(typeof(PostResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
         {
-            var post = await mediator.Send(new GetPostByIdQuery(id));
+            var post = await mediator.Send(new GetPostByIdQuery(id), cancellationToken);
 
             if (post == null)
             {
@@ -58,9 +59,9 @@ namespace Example.Api.Controllers.v1
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ProducesResponseType(typeof(PostResponse), StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create([FromBody] CreatePostRequest post)
+        public async Task<IActionResult> Create([FromBody] CreatePostRequest post, CancellationToken cancellationToken)
         {
-            var createdPost = await mediator.Send(new CreatePostCommand(post.Title));
+            var createdPost = await mediator.Send(new CreatePostCommand(post.Title), cancellationToken);
             var result = mapper.Map<Post, PostResponse>(createdPost);
 
             var baseUri = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
@@ -69,13 +70,31 @@ namespace Example.Api.Controllers.v1
             return Created(locationUri, result);
         }
 
+        [HttpPut("{id:Guid}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [ProducesResponseType(typeof(PostResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Put(Guid id, [FromBody] UpdatePostRequest post, CancellationToken cancellationToken)
+        {
+            var updatedPost = await mediator.Send(new UpdatePostCommand(id, post.Title), cancellationToken);
+
+            if (updatedPost == null)
+            {
+                return NotFound();
+            }
+
+            var updatedPostResponse = mapper.Map<Post, PostResponse>(updatedPost);
+
+            return Ok(updatedPostResponse);
+        }
+
         [HttpDelete("{id:Guid}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            var deletedSuccessfully = await mediator.Send(new DeletePostCommand(id));
+            var deletedSuccessfully = await mediator.Send(new DeletePostCommand(id), cancellationToken);
 
             if (!deletedSuccessfully)
             {
