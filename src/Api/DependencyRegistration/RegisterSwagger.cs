@@ -25,7 +25,7 @@ namespace Example.Api.DependencyRegistration
                 {
                     { 
                         new OpenApiSecurityScheme
-                        { 
+                        {
                             Reference = new OpenApiReference
                             {
                                 Id = "Bearer",

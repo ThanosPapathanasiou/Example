@@ -2,7 +2,7 @@
 
 namespace Example.Api.Contracts.v1.Responses
 {
-    public class RegistrationFailureResponse
+    public class AuthFailedResponse
     {
         public IEnumerable<string> Errors { get; set; }
     }

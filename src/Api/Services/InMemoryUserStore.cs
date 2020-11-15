@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Example.Api.Services
 {
-    public class InMemoryUserStore : IUserEmailStore<IdentityUser>
+    public class InMemoryUserStore : IUserEmailStore<IdentityUser>, IUserPasswordStore<IdentityUser>
     {
         private readonly IList<IdentityUser> users;
         public InMemoryUserStore()
@@ -83,9 +83,9 @@ namespace Example.Api.Services
             throw new System.NotImplementedException();
         }
 
-        public Task<string> GetUserIdAsync(IdentityUser user, CancellationToken cancellationToken)
+        public async Task<string> GetUserIdAsync(IdentityUser user, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            return await Task.FromResult(user.Id);
         }
 
         public Task SetEmailAsync(IdentityUser user, string email, CancellationToken cancellationToken)
@@ -104,6 +104,22 @@ namespace Example.Api.Services
         }
 
         public Task<IdentityResult> UpdateAsync(IdentityUser user, CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task SetPasswordHashAsync(IdentityUser user, string passwordHash, CancellationToken cancellationToken)
+        {
+            user.PasswordHash = passwordHash;
+            return Task.CompletedTask;
+        }
+
+        public async Task<string> GetPasswordHashAsync(IdentityUser user, CancellationToken cancellationToken)
+        {
+            return await Task.FromResult(user.PasswordHash);
+        }
+
+        public Task<bool> HasPasswordAsync(IdentityUser user, CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();
         }

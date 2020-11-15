@@ -19,6 +19,7 @@ using System.Threading;
 namespace Example.Api.Controllers.v1
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route(ApiRoutes.PostsV1)]
     public class PostsController : ControllerBase
     {
@@ -32,6 +33,7 @@ namespace Example.Api.Controllers.v1
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(List<PostResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
@@ -41,6 +43,7 @@ namespace Example.Api.Controllers.v1
         }
 
         [HttpGet("{id:Guid}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(PostResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
@@ -57,7 +60,6 @@ namespace Example.Api.Controllers.v1
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ProducesResponseType(typeof(PostResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> Create([FromBody] CreatePostRequest post, CancellationToken cancellationToken)
         {
@@ -71,7 +73,6 @@ namespace Example.Api.Controllers.v1
         }
 
         [HttpPut("{id:Guid}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ProducesResponseType(typeof(PostResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Put(Guid id, [FromBody] UpdatePostRequest post, CancellationToken cancellationToken)
@@ -89,7 +90,6 @@ namespace Example.Api.Controllers.v1
         }
 
         [HttpDelete("{id:Guid}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
